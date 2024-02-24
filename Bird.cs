@@ -16,6 +16,8 @@ public class Bird : MonoBehaviour
     FlappyGameManager flappy; // 게임을 관리하는 매니저
 
 
+ㅁㄴㅇㅁㄴㅇ
+
     private void Awake()
     {
         flappy = GameObject.Find("FlappyGameManager").GetComponent<FlappyGameManager>();
