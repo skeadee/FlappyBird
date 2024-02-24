@@ -5,8 +5,7 @@ using System.Collections;
 
 public class Bird : MonoBehaviour
 {
-    public float upForce = 200f; // ÈûÀ» ¾ç
-    public bool crash;
+    public float upForce = 200f; // ìœ„ë¡œ ì˜¬ë¼ê°ˆ í˜ì˜ ì–‘
     bool Delay = false;
 
     private Rigidbody2D _rb2d;
@@ -15,11 +14,10 @@ public class Bird : MonoBehaviour
 
     FlappyGameManager flappy;
 
-    bool uiCheck = false; // ÇöÀç ¸¶¿ì½º°¡ UI¿¡ ¿Ã¶ó°¡ ÀÖ´ÂÁö Ã¼Å©ÇÏ´Â ÇÔ¼ö
 
     private void Awake()
     {
-        flappy = GameObject.Find("FlappyGameManager").GetComponent<FlappyGameManager>();
+        flappy = GameObject.Find("FlappyGameManager").GetComponent<FlappyGameManager>(); 
     }
 
     private void Start()
@@ -27,97 +25,31 @@ public class Bird : MonoBehaviour
         _rb2d = GetComponent<Rigidbody2D>();
         ani = GetComponent<Animator>();
         pol = GetComponent<PolygonCollider2D>();
-        crash = false;
+        _rb2d.simulated = true;
     }
 
-    void Update()
+    private void Update()
     {
-        if(flappy.GameMode == 4)
-        {
-            Die();
-            return;
-        }
-
-        
-        GameMode();
+        if (Input.GetMouseButtonDown(0)) Jump();
     }
 
-    
-
-    void GameMode()
+    private void Jump() // ì í”„ë¥¼ ë‹´ë‹¹í•˜ëŠ” í•¨ìˆ˜
     {
-       
+        if (Delay) return; // ë”œë ˆì´ê°€ ì•„ì§ ì•ˆëë‚¬ë‹¤ë©´ ì í”„ë¥¼ í•˜ì§€ ì•ŠëŠ”ë‹¤
 
-        if(Input.GetMouseButtonDown(0) && !Delay && flappy.GameMode != 0) Jump(); // °ÔÀÓ ÁøÇàÁßÀÌ°í , ¸¶¿ì½º·Î Å¬¸¯À» ÇßÀ» ¶§
-        if (flappy.GameMode == 1) _rb2d.simulated = true; // °ÔÀÓÀÌ ÁøÇàÁßÀÌ¸é ¸®Áöµå ¹Ùµğ±â´É È°¼ºÈ­ ÇÏ±â 
+        Delay = true;
+        _rb2d.velocity = Vector2.zero; // í˜„ì¬ í˜ì˜ ë°©í–¥ ì´ˆê¸°í™”
+        _rb2d.AddForce(new Vector2(0, upForce)); // ìœ„ìª½ìœ¼ë¡œ upForceë§Œí¼ í˜ì„ ì¤€ë‹¤
+        ani.SetTrigger("Nor"); // ì• ë‹ˆë©”ì´ì…˜ ì „í™˜ 
+        StartCoroutine(JumpDelay()); //  ë‹¤ìŒ ì í”„ê¹Œì§€ ê±¸ë¦¬ëŠ” ë”œë ˆì´ë¥¼ ê³„ì‚°í•˜ëŠ” ì½”ë£¨í‹´
     }
 
-    
-
-    void Die() // ÇÃ·¹ÀÌ¾î°¡ Á×¾úÀ»¶§¸¦ ´ã´çÇÏ´Â ÇÔ¼ö
-    {
-        pol.isTrigger = false;
-        ani.SetBool("Die", true);
-    }
-
-   
-    void Jump() // Á¡ÇÁ¸¦ ´ã´çÇÏ´Â ÇÔ¼ö
-    {
-        if (uiCheck) return; // ¸¸¾à ¸¶¿ì½º°¡ UIÀ§¿¡ ÀÖ´Ù¸é ½ÇÇà ÁßÁö
-
-        Delay = true; 
-        _rb2d.velocity = Vector2.zero; // ÇöÀç ÈûÀÇ ¹æÇâ ÃÊ±âÈ­
-        _rb2d.AddForce(new Vector2(0, upForce)); 
-        ani.SetTrigger("Nor");
-        StartCoroutine(JumpDelay());
-    }
-
-    IEnumerator JumpDelay() // Á¡ÇÁ ´ë±â ½Ã°£
+    IEnumerator JumpDelay() // ì í”„ ëŒ€ê¸° ì‹œê°„
     {
         yield return new WaitForSeconds(0.3f);
         Delay = false;
     }
 
 
-    private void OnTriggerEnter2D(Collider2D col)
-    {
-       
-        if (col.gameObject.tag == "Wall" && crash == false)
-        {
-            ani.SetTrigger("Crash");
-            flappy.TakeDamage(1);
-            crash = true;
-        }
-
-
-        if (col.gameObject.name == "Goal" && crash == false) flappy.AddScore(100);
-       
-    }
-
-    void OnCollisionEnter2D(Collision2D col) // Player°¡ ¶¥¿¡ Ãæµ¹ ½Ã 
-    {
-        if (col.gameObject.tag == "Ground")
-        {
-            flappy.TakeDamage(99);
-            ani.SetBool("Die", true);
-        }
-        
-    }
-
-    public void crash_off()
-    {
-        crash = false;
-    }
-
-
-
-    public void uiOn()
-    {
-        uiCheck = true;
-    }
-
-    public void uiOut()
-    {
-        uiCheck = false;
-    }
+  
 }
