@@ -42,7 +42,8 @@ public class Bird : MonoBehaviour
 
         Delay = true;
         _rb2d.velocity = Vector2.zero; // 현재 힘의 방향 초기화
-        _rb2d.AddForce(new Vector2(0, upForce)); // 위쪽으로 upForce만큼 힘을 준다
+        
+       _rb2d.AddForce(new Vector2(0, upForce), ForceMode2D.Impulse); // 위쪽으로 upForce변수 만큼 힘을 준다
         ani.SetTrigger("Nor"); // 애니메이션 전환 
         StartCoroutine(JumpDelay()); //  다음 점프까지 걸리는 딜레이를 계산하는 코루틴
     }
